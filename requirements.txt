@@ -1,0 +1,4 @@
+# Runtime dependencies for the Python analytics bridge.
+fastapi>=0.116,<1.0
+uvicorn>=0.35,<1.0
+httpx>=0.28,<1.0

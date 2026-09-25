@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Frankenstein Command Center</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body class="theme-low">
+  <div class="app-shell">
+    <div class="bg-grid" aria-hidden="true"></div>
+    <div class="bg-glow bg-glow-left" aria-hidden="true"></div>
+    <div class="bg-glow bg-glow-right" aria-hidden="true"></div>
+
+    <header class="topbar panel">
+      <div class="brand-block">
+        <div class="eyebrow">Project Frankenstein 2.0</div>
+        <div class="brand-row">
+          <h1>Threat Command Center</h1>
+          <span class="live-pill" id="live-indicator">
+            <span class="live-dot"></span>
+            Live telemetry
+          </span>
+        </div>
+      </div>
+
+      <div class="topbar-meta">
+        <div class="meta-chip">
+          <span class="meta-label">Environment</span>
+          <span class="meta-value">Local demo</span>
+        </div>
+        <div class="meta-chip">
+          <span class="meta-label">Bridge</span>
+          <span class="meta-value" id="bridge-connection-status">Connecting</span>
+        </div>
+        <div class="meta-chip">
+          <span class="meta-label">Last update</span>
+          <span class="meta-value" id="last-update-label">Waiting for telemetry</span>
+        </div>
+      </div>
+    </header>
+
+    <div class="alert-banner" id="alert-banner" hidden>
+      <div class="alert-banner-stack">
+        <span class="alert-kicker" id="alert-banner-kicker">Escalation</span>
+        <strong id="alert-banner-title">Critical activity detected</strong>
+      </div>
+      <p id="alert-banner-copy">Monitoring live attack telemetry.</p>
+    </div>
+
+    <main class="layout">
+      <section class="hero-grid">
+        <section class="posture panel">
+          <div class="section-heading">
+            <div>
+              <span class="eyebrow">Threat posture</span>
+              <h2>Global risk overview</h2>
+            </div>
+            <div class="mini-status" id="posture-indicator">Stable</div>
+          </div>
+
+          <div class="posture-grid">
+            <div class="gauge-card">
+              <div class="gauge-wrap">
+                <svg class="gauge" viewBox="0 0 220 220" role="img" aria-labelledby="gauge-title gauge-desc">
+                  <title id="gauge-title">Threat posture gauge</title>
+                  <desc id="gauge-desc">Shows the current global risk score and threat level.</desc>
+                  <defs>
+                    <linearGradient id="gauge-gradient" x1="0%" x2="100%" y1="0%" y2="100%">
+                      <stop offset="0%" stop-color="var(--gauge-start)" />
+                      <stop offset="100%" stop-color="var(--gauge-end)" />
+                    </linearGradient>
+                  </defs>
+                  <circle class="gauge-track" cx="110" cy="110" r="84"></circle>
+                  <circle class="gauge-ring" id="gauge-ring" cx="110" cy="110" r="84"></circle>
+                  <circle class="gauge-core" cx="110" cy="110" r="58"></circle>
+                </svg>
+                <div class="gauge-label">
+                  <div class="gauge-score" id="global-risk-score">0</div>
+                  <div class="gauge-caption">Risk score</div>
+                </div>
+              </div>
+
+              <div class="gauge-summary">
+                <div class="risk-pill" id="global-risk-level">Low</div>
+                <p id="global-posture-copy">Waiting for threat telemetry.</p>
+              </div>
+            </div>
+
+            <div class="posture-metrics">
+              <article class="metric-tile">
+                <div class="metric-topline">
+                  <span class="metric-label">Active threats</span>
+                  <span class="metric-trend" id="active-threat-trend">Steady</span>
+                </div>
+                <strong class="metric-value" id="active-threat-count">0</strong>
+                <svg class="metric-sparkline" id="active-threat-spark" viewBox="0 0 120 32" preserveAspectRatio="none" aria-hidden="true"></svg>
+                <p class="metric-delta" id="active-threat-delta">No recent change</p>
+              </article>
+
+              <article class="metric-tile">
+                <div class="metric-topline">
+                  <span class="metric-label">Recent events</span>
+                  <span class="metric-trend" id="event-count-trend">Steady</span>
+                </div>
+                <strong class="metric-value" id="event-count">0</strong>
+                <svg class="metric-sparkline" id="event-count-spark" viewBox="0 0 120 32" preserveAspectRatio="none" aria-hidden="true"></svg>
+                <p class="metric-delta" id="event-count-delta">No recent change</p>
+              </article>
+
+              <article class="metric-tile">
+                <div class="metric-topline">
+                  <span class="metric-label">High / critical</span>
+                  <span class="metric-trend" id="elevated-event-trend">Steady</span>
+                </div>
+                <strong class="metric-value" id="elevated-event-count">0</strong>
+                <svg class="metric-sparkline" id="elevated-event-spark" viewBox="0 0 120 32" preserveAspectRatio="none" aria-hidden="true"></svg>
+                <p class="metric-delta" id="elevated-event-delta">No recent change</p>
+              </article>
+
+              <article class="metric-tile">
+                <div class="metric-topline">
+                  <span class="metric-label">Healthy sources</span>
+                  <span class="metric-trend" id="healthy-source-trend">Steady</span>
+                </div>
+                <strong class="metric-value" id="healthy-source-count">0/3</strong>
+                <svg class="metric-sparkline" id="healthy-source-spark" viewBox="0 0 120 32" preserveAspectRatio="none" aria-hidden="true"></svg>
+                <p class="metric-delta" id="healthy-source-delta">Awaiting source updates</p>
+              </article>
+            </div>
+          </div>
+        </section>
+
+        <section class="priority-action panel" aria-label="Priority action">
+          <div class="priority-action-incident">
+            <span class="eyebrow">Priority</span>
+            <strong id="priority-action-title">Waiting for prioritized incident</strong>
+            <span id="priority-action-meta">Risk - · -</span>
+          </div>
+          <p class="priority-action-response" id="priority-action-response">Recommended response will appear when an incident is available.</p>
+          <div class="priority-action-controls">
+            <button class="containment-button" id="mitigate-button" type="button">Mitigate Attack</button>
+            <div class="containment-status" id="containment-status" hidden>
+              <strong id="containment-title">Threat contained</strong>
+              <p id="containment-message">Attack simulator stopped. No new attack activity detected.</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="incident panel">
+          <div class="section-heading tight">
+            <div>
+              <span class="eyebrow">Current incident</span>
+              <h2>Priority focus</h2>
+            </div>
+            <div class="mini-status" id="incident-operator-state">Waiting</div>
+          </div>
+
+          <div class="incident-card" id="incident-card">
+            <div class="incident-empty" id="incident-empty">
+              No prioritized incident yet. The command center will promote the highest-risk telemetry as soon as detections arrive.
+            </div>
+
+            <div class="incident-content" id="incident-content" hidden>
+              <div class="incident-topline">
+                <div class="incident-title-block">
+                  <div class="incident-title-row">
+                    <span class="risk-pill small" id="incident-level">Low</span>
+                    <span class="incident-source-chip" id="incident-source-chip">Attack simulator</span>
+                  </div>
+                  <h3 id="incident-title">No active incident</h3>
+                </div>
+                <div class="incident-score-block">
+                  <span class="incident-score-label">Risk score</span>
+                  <strong id="incident-score">0</strong>
+                </div>
+              </div>
+
+              <dl class="incident-summary-grid">
+                <div>
+                  <dt>Origin</dt>
+                  <dd id="incident-origin">-</dd>
+                </div>
+                <div>
+                  <dt>Source</dt>
+                  <dd id="incident-source">-</dd>
+                </div>
+                <div>
+                  <dt>Observed</dt>
+                  <dd id="incident-observed">-</dd>
+                </div>
+                <div>
+                  <dt>Status</dt>
+                  <dd id="incident-status">-</dd>
+                </div>
+              </dl>
+
+              <div class="incident-narrative-grid">
+                <div class="incident-action-block emphasis">
+                  <span class="incident-action-label">Why it matters</span>
+                  <p id="incident-summary">Awaiting prioritized event selection.</p>
+                </div>
+
+                <div class="incident-action-block action">
+                  <span class="incident-action-label">Recommended action</span>
+                  <p id="incident-action">Awaiting enriched event guidance.</p>
+                </div>
+              </div>
+
+              <details class="technical-details-panel">
+                <summary>Investigation context</summary>
+                <dl class="technical-grid">
+                  <div>
+                    <dt>Event ID</dt>
+                    <dd id="incident-id">-</dd>
+                  </div>
+                  <div>
+                    <dt>Source system</dt>
+                    <dd id="incident-source-system">-</dd>
+                  </div>
+                  <div>
+                    <dt>Source type</dt>
+                    <dd id="incident-source-type">-</dd>
+                  </div>
+                  <div>
+                    <dt>Category</dt>
+                    <dd id="incident-category">-</dd>
+                  </div>
+                  <div>
+                    <dt>Observed time</dt>
+                    <dd id="incident-observed-detail">-</dd>
+                  </div>
+                  <div>
+                    <dt>Ingested time</dt>
+                    <dd id="incident-ingested">-</dd>
+                  </div>
+                  <div>
+                    <dt>Raw severity</dt>
+                    <dd id="incident-raw-severity">-</dd>
+                  </div>
+                  <div>
+                    <dt>Risk score</dt>
+                    <dd id="incident-risk-score-detail">-</dd>
+                  </div>
+                  <div>
+                    <dt>Status</dt>
+                    <dd id="incident-status-detail">-</dd>
+                  </div>
+                </dl>
+
+                <details class="technical-details">
+                  <summary>View raw payload</summary>
+                  <pre id="incident-raw"></pre>
+                </details>
+              </details>
+            </div>
+          </div>
+        </section>
+      </section>
+
+      <section class="health panel">
+        <div class="section-heading tight">
+          <div>
+            <span class="eyebrow">Source health</span>
+            <h2>Pipeline status</h2>
+          </div>
+        </div>
+
+        <div class="health-list">
+          <article class="health-item" data-source="bridge">
+            <div>
+              <h3>Analytics bridge</h3>
+              <p>FastAPI aggregation and streaming</p>
+            </div>
+            <span class="health-badge" id="health-bridge">Connecting</span>
+          </article>
+          <article class="health-item" data-source="legacy_api">
+            <div>
+              <h3>Legacy API</h3>
+              <p>Raw network and access activity</p>
+            </div>
+            <span class="health-badge" id="health-legacy">Unknown</span>
+          </article>
+          <article class="health-item" data-source="attack_sim">
+            <div>
+              <h3>Attack simulator</h3>
+              <p>Live threat generation feed</p>
+            </div>
+            <span class="health-badge" id="health-sim">Unknown</span>
+          </article>
+        </div>
+      </section>
+
+      <section class="feed panel">
+        <div class="section-heading">
+          <div>
+            <span class="eyebrow">Live threat feed</span>
+            <h2>Operator queue</h2>
+          </div>
+          <div class="feed-summary" id="feed-summary">Streaming normalized telemetry</div>
+        </div>
+
+        <div class="feed-controls">
+          <div class="feed-filter-group" role="tablist" aria-label="Severity filters">
+            <button class="feed-filter active" data-severity="all" type="button">All</button>
+            <button class="feed-filter" data-severity="critical" type="button">Critical</button>
+            <button class="feed-filter" data-severity="high" type="button">High</button>
+            <button class="feed-filter" data-severity="medium" type="button">Medium</button>
+          </div>
+
+          <div class="feed-tools">
+            <label class="feed-search">
+              <span class="sr-only">Search events</span>
+              <input id="feed-search-input" type="search" placeholder="Search title, source, or origin IP">
+            </label>
+
+            <div class="feed-segment-group" id="feed-source-filter" role="group" aria-label="Filter by source">
+              <button class="feed-option active" data-source="all" type="button">All</button>
+              <button class="feed-option" data-source="attack_sim" type="button">Attack</button>
+              <button class="feed-option" data-source="legacy_api" type="button">Legacy</button>
+            </div>
+
+            <div class="feed-segment-group" id="feed-sort-order" role="group" aria-label="Sort events">
+              <button class="feed-option active" data-sort="newest" type="button">Newest</button>
+              <button class="feed-option" data-sort="highest-risk" type="button">Risk</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="feed-list" id="feed-list" role="list" aria-label="Live threat feed"></div>
+      </section>
+
+      <section class="activity panel">
+        <div class="section-heading">
+          <div>
+            <span class="eyebrow">Threat analytics</span>
+            <h2>Recent telemetry patterns</h2>
+          </div>
+          <div class="feed-summary" id="timeline-summary">Tracking live risk movement</div>
+        </div>
+
+        <div class="analytics-grid">
+          <article class="analytics-card analytics-card-wide">
+            <div class="analytics-card-header">
+              <div>
+                <span class="eyebrow">Activity timeline</span>
+                <h3>Threat activity</h3>
+              </div>
+              <p id="timeline-detail">Latest risk movement</p>
+            </div>
+            <div class="timeline-card">
+              <svg id="timeline-chart" viewBox="0 0 640 170" preserveAspectRatio="none" aria-label="Recent threat activity timeline"></svg>
+            </div>
+          </article>
+
+          <article class="analytics-card">
+            <div class="analytics-card-header">
+              <div>
+                <span class="eyebrow">Threat distribution</span>
+                <h3>By category</h3>
+              </div>
+              <p id="distribution-summary">Awaiting telemetry</p>
+            </div>
+            <div class="distribution-chart" id="distribution-chart"></div>
+          </article>
+
+          <article class="analytics-card">
+            <div class="analytics-card-header">
+              <div>
+                <span class="eyebrow">Source activity</span>
+                <h3>By source</h3>
+              </div>
+              <p id="source-activity-summary">Awaiting telemetry</p>
+            </div>
+            <div class="distribution-chart" id="source-activity-chart"></div>
+          </article>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

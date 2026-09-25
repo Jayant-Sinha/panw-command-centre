@@ -1,0 +1,13 @@
+bin/
+obj/
+.venv/
+venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.mypy_cache/
+.vscode/
+live_stream.log
+simulator/live_stream.log
+runtime/*.pid
+
